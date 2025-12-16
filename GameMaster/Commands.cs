@@ -256,6 +256,10 @@ namespace GameMaster
             if (LobbyManager.Instance.gameMode.id == GameModeManager.Instance.defaultMode.id || LobbyManager.Instance.gameMode.id == GameModeManager.Instance.practiceMode.id)
                 return new BasicCommandResponse(["Unable to skip while not playing a mode."], CommandResponseType.Private);
 
+            GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+            GameManager.Instance.gameMode.EndRound();
+            ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
+
             GameLoop.Instance.NextGame();
             return new BasicCommandResponse([], CommandResponseType.Private);
         }
@@ -274,6 +278,11 @@ namespace GameMaster
         {
             Instance.nextGameModeId = -1;
             Instance.nextMapId = -1;
+
+            GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+            GameManager.Instance.gameMode.EndRound();
+            ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
+
             GameLoop.Instance.RestartLobby();
             return new BasicCommandResponse([], CommandResponseType.Private);
         }
@@ -305,6 +314,11 @@ namespace GameMaster
 
             Instance.nextGameModeId = -1;
             Instance.nextMapId = -1;
+
+            GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+            GameManager.Instance.gameMode.EndRound();
+            ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
+
             ServerSend.LoadMap(mapResult.result.id, GameModeManager.Instance.practiceMode.id);
             return new BasicCommandResponse([], CommandResponseType.Private);
         }
@@ -362,6 +376,11 @@ namespace GameMaster
         {
             foreach (ulong playerClientId in GameManager.Instance.activePlayers.Keys)
                 LobbyManager.Instance.GetClient(playerClientId).field_Public_Boolean_0 = true; // Participating (will spawn players that died in the current round when the round restarts)
+
+            GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+            GameManager.Instance.gameMode.EndRound();
+            ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
+
             ServerSend.StartGame();
             return new BasicCommandResponse([], CommandResponseType.Private);
         }
@@ -417,7 +436,7 @@ namespace GameMaster
 
         public override BaseCommandResponse Execute(BaseExecutionMethod executionMethod, object executorDetails, string args, bool ignorePermissions = false)
         {
-            if (GameManager.Instance == null)
+            if (GameManager.Instance == null || (!LobbyManager.Instance.gameMode.skipAsString && GameManager.Instance.gameMode.modeState == GameModeState.Freeze))
                 return new BasicCommandResponse(["You cannot kill players right now."], CommandResponseType.Private);
 
             if (args.Length == 0)
@@ -472,7 +491,7 @@ namespace GameMaster
 
         public override BaseCommandResponse Execute(BaseExecutionMethod executionMethod, object executorDetails, string args, bool ignorePermissions = false)
         {
-            if (GameManager.Instance == null)
+            if (GameManager.Instance == null || (!LobbyManager.Instance.gameMode.skipAsString && GameManager.Instance.gameMode.modeState == GameModeState.Freeze))
                 return new BasicCommandResponse(["You cannot explode players right now."], CommandResponseType.Private);
 
             if (args.Length == 0)

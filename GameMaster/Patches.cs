@@ -11,7 +11,7 @@ namespace GameMaster
         [HarmonyPriority(int.MaxValue)]
         internal static void PreServerSendLoadMap(ref int param_0, ref int param_1)
         {
-            if (Instance.nextGameModeId == -1 || param_1 == GameModeManager.Instance.defaultMode.id)
+            if (Instance.nextGameModeId == -1 || GameModeManager.Instance.allGameModes[param_1].skipAsString)
                 return;
             
             param_1 = Instance.nextGameModeId;
