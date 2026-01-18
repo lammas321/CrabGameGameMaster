@@ -5,11 +5,11 @@ using System.Globalization;
 
 namespace GameMaster
 {
-    [BepInPlugin($"lammas123.{MyPluginInfo.PLUGIN_NAME}", MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency("lammas123.ChatCommands")]
-    public class GameMaster : BasePlugin
+    public sealed class GameMaster : BasePlugin
     {
-        internal static GameMaster Instance;
+        internal static GameMaster Instance { get; private set; }
 
         internal int nextGameModeId = -1;
         internal int nextMapId = -1;
@@ -38,9 +38,11 @@ namespace GameMaster
             ChatCommands.Api.RegisterCommand(new KillCommand());
             ChatCommands.Api.RegisterCommand(new ExplodeCommand());
             ChatCommands.Api.RegisterCommand(new RespawnCommand());
-            
-            Harmony.CreateAndPatchAll(typeof(Patches));
-            Log.LogInfo($"Loaded [{MyPluginInfo.PLUGIN_NAME} {MyPluginInfo.PLUGIN_VERSION}]");
+
+            Harmony harmony = new(MyPluginInfo.PLUGIN_NAME);
+            harmony.PatchAll(typeof(Patches));
+
+            Log.LogInfo($"Initialized [{MyPluginInfo.PLUGIN_NAME} {MyPluginInfo.PLUGIN_VERSION}]");
         }
     }
 }

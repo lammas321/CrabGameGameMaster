@@ -12,7 +12,7 @@ namespace GameMaster
     internal static class Utility
     {
         internal static int MaxChatMessageLength
-            => GameUiChatBox.Instance != null ? GameUiChatBox.Instance.field_Private_Int32_0 : 80;
+            => Chatbox.Instance != null ? Chatbox.Instance.field_Private_Int32_0 : 80;
 
         internal static string FormatMessage(string str)
             => Regex.Replace(
@@ -24,7 +24,7 @@ namespace GameMaster
 
         internal static string[] FormatGameModeDescription(string description)
         {
-            List<string> lines = new(description.Split('\n', StringSplitOptions.RemoveEmptyEntries));
+            List<string> lines = [.. description.Split('\n', StringSplitOptions.RemoveEmptyEntries)];
             for (int i = 0; i < lines.Count; i++)
             {
                 lines[i] = lines[i].Replace('•', '*');
@@ -62,7 +62,7 @@ namespace GameMaster
                 displayName ??= string.Empty;
 
             List<byte> bytes = [];
-            bytes.AddRange(BitConverter.GetBytes((int)ServerSendType.sendMessage));
+            bytes.AddRange(BitConverter.GetBytes((int)ServerPackets.sendMessage));
             bytes.AddRange(BitConverter.GetBytes(senderClientId));
 
             bytes.AddRange(BitConverter.GetBytes(displayName.Length));
@@ -86,7 +86,7 @@ namespace GameMaster
                     for (int i = 0; i < clientIdBytes.Length; i++)
                         packet.field_Private_List_1_Byte_0[i + 8] = clientIdBytes[i];
                 }
-                SteamPacketManager.SendPacket(new CSteamID(clientId), packet, 8, SteamPacketDestination.ToClient);
+                SteamPacketManager.SendPacket(new CSteamID(clientId), packet, 8, SteamPacketManager_NetworkChannel.ToClient);
             }
         }
 
@@ -96,7 +96,7 @@ namespace GameMaster
         {
             if (!GameManager.Instance.activePlayers.ContainsKey(clientId))
                 yield break;
-            GameModeState state = GameManager.Instance.gameMode.modeState;
+            GameMode_ModeState state = GameManager.Instance.gameMode.modeState;
             yield return new WaitForSeconds(delay);
             if (!GameManager.Instance.activePlayers.ContainsKey(clientId) || GameManager.Instance.gameMode.modeState != state)
                 yield break;
@@ -105,11 +105,11 @@ namespace GameMaster
         }
         public static void RespawnPlayer(ulong clientId)
         {
-            Vector3 position = SpawnManager.Instance.FindGroundedSpawnPosition(clientId);
+            Vector3 position = SpawnZoneManager.Instance.FindGroundedSpawnPosition(clientId);
             int attempts = 0;
-            while (attempts < 100 && Physics.SphereCastAll(new Ray(position + Vector3.up * 5f, Vector3.down), PlayerRadius.playerRadius, 5f, GameManager.Instance.whatIsPlayer).Length >= 1)
+            while (attempts < 100 && Physics.SphereCastAll(new Ray(position + Vector3.up * 5f, Vector3.down), PlayerInformation.playerRadius, 5f, GameManager.Instance.whatIsPlayer).Length >= 1)
             {
-                position = SpawnManager.Instance.FindGroundedSpawnPosition(clientId);
+                position = SpawnZoneManager.Instance.FindGroundedSpawnPosition(clientId);
                 attempts++;
             }
             LobbyManager.Instance.GetClient(clientId).field_Public_Boolean_0 = true; // Participating (will spawn next round)

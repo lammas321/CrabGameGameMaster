@@ -258,7 +258,7 @@ namespace GameMaster
 
             if (!LobbyManager.Instance.gameMode.skipAsString)
             {
-                GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+                GameManager.Instance.gameMode.modeState = GameMode_ModeState.Ended;
                 GameManager.Instance.gameMode.EndRound();
                 ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
             }
@@ -284,7 +284,7 @@ namespace GameMaster
 
             if (!LobbyManager.Instance.gameMode.skipAsString)
             {
-                GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+                GameManager.Instance.gameMode.modeState = GameMode_ModeState.Ended;
                 GameManager.Instance.gameMode.EndRound();
                 ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
             }
@@ -323,7 +323,7 @@ namespace GameMaster
 
             if (!LobbyManager.Instance.gameMode.skipAsString)
             {
-                GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+                GameManager.Instance.gameMode.modeState = GameMode_ModeState.Ended;
                 GameManager.Instance.gameMode.EndRound();
                 ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
             }
@@ -388,7 +388,7 @@ namespace GameMaster
 
             if (!LobbyManager.Instance.gameMode.skipAsString)
             {
-                GameManager.Instance.gameMode.modeState = GameModeState.Ended;
+                GameManager.Instance.gameMode.modeState = GameMode_ModeState.Ended;
                 GameManager.Instance.gameMode.EndRound();
                 ServerSend.SendGameModeTimer(1f, (int)GameManager.Instance.gameMode.modeState);
             }
@@ -448,7 +448,7 @@ namespace GameMaster
 
         public override BaseCommandResponse Execute(BaseExecutionMethod executionMethod, object executorDetails, string args, bool ignorePermissions = false)
         {
-            if (GameManager.Instance == null || (!LobbyManager.Instance.gameMode.skipAsString && GameManager.Instance.gameMode.modeState == GameModeState.Freeze))
+            if (GameManager.Instance == null || (!LobbyManager.Instance.gameMode.skipAsString && GameManager.Instance.gameMode.modeState == GameMode_ModeState.Freeze))
                 return new BasicCommandResponse(["You cannot kill players right now."], CommandResponseType.Private);
 
             if (args.Length == 0)
@@ -503,7 +503,7 @@ namespace GameMaster
 
         public override BaseCommandResponse Execute(BaseExecutionMethod executionMethod, object executorDetails, string args, bool ignorePermissions = false)
         {
-            if (GameManager.Instance == null || (!LobbyManager.Instance.gameMode.skipAsString && GameManager.Instance.gameMode.modeState == GameModeState.Freeze))
+            if (GameManager.Instance == null || (!LobbyManager.Instance.gameMode.skipAsString && GameManager.Instance.gameMode.modeState == GameMode_ModeState.Freeze))
                 return new BasicCommandResponse(["You cannot explode players right now."], CommandResponseType.Private);
 
             if (args.Length == 0)
