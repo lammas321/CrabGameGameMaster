@@ -1,4 +1,6 @@
 ﻿using ChatCommands;
+using CrabDevKit.Intermediary;
+using CrabDevKit.Utilities;
 using SteamworksNative;
 using System.Collections.Generic;
 using System.Linq;
@@ -164,11 +166,11 @@ namespace GameMaster
         public override BaseCommandResponse Execute(BaseExecutionMethod executionMethod, object executorDetails, string args, bool ignorePermissions = false)
         {
             if (args.Length == 0)
-                return new StyledCommandResponse("Mode Info", [LobbyManager.Instance.gameMode.modeName, .. Utility.FormatGameModeDescription(LobbyManager.Instance.gameMode.modeDescription)]);
+                return new StyledCommandResponse("Mode Info", [LobbyManager.Instance.gameMode.modeName, .. ChatUtil.FormatGameModeDescription(LobbyManager.Instance.gameMode.modeDescription)]);
 
             ParsedResult<GameModeData> gameModeResult = Api.CommandArgumentParser.Parse<GameModeData>(args);
             if (gameModeResult.successful)
-                return new StyledCommandResponse("Mode Info", [gameModeResult.result.modeName, .. Utility.FormatGameModeDescription(gameModeResult.result.modeDescription)]);
+                return new StyledCommandResponse("Mode Info", [gameModeResult.result.modeName, .. ChatUtil.FormatGameModeDescription(gameModeResult.result.modeDescription)]);
 
             return new BasicCommandResponse(["You didn't specify a valid mode."], CommandResponseType.Private);
         }
@@ -569,7 +571,8 @@ namespace GameMaster
                 if (GameManager.Instance.activePlayers.ContainsKey((ulong)executorDetails) && !GameManager.Instance.activePlayers[(ulong)executorDetails].dead)
                     return new BasicCommandResponse(["You are already alive."], CommandResponseType.Private);
 
-                Utility.RespawnPlayer((ulong)executorDetails);
+                LobbyManager.Instance.GetClient((ulong)executorDetails).set_activePlayer(true);
+                GameServer.Instance.QueueRespawn((ulong)executorDetails, 0f);
                 return new BasicCommandResponse([], CommandResponseType.Private);
             }
 
@@ -588,7 +591,10 @@ namespace GameMaster
 
             foreach (ulong clientId in clientIds)
                 if (!GameManager.Instance.activePlayers.ContainsKey(clientId) || GameManager.Instance.activePlayers[clientId].dead)
-                    Utility.RespawnPlayer(clientId);
+                {
+                    LobbyManager.Instance.GetClient((ulong)executorDetails).set_activePlayer(true);
+                    GameServer.Instance.QueueRespawn(clientId, 0f);
+                }
             return new BasicCommandResponse([], CommandResponseType.Private);
         }
     }

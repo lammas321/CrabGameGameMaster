@@ -32,7 +32,7 @@ namespace GameMaster
         internal static void PostServerSendPlayerDied(ulong param_0)
         {
             if (LobbyManager.Instance.gameMode == GameModeManager.Instance.defaultMode)
-                Utility.QueueRespawn(param_0, 3f);
+                GameServer.Instance.QueueRespawn(param_0, 3f);
         }
     }
 }

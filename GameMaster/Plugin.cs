@@ -7,6 +7,7 @@ namespace GameMaster
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency("lammas123.ChatCommands")]
+    [BepInDependency("lammas123.CrabDevKit")]
     public sealed class GameMaster : BasePlugin
     {
         internal static GameMaster Instance { get; private set; }

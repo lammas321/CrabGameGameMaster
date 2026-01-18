@@ -11,7 +11,7 @@
 	<PropertyGroup>
 		<AssemblyName>lammas123.GameMaster</AssemblyName>
 		<Product>GameMaster</Product>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 
 		<SteamDir Condition="'$(SteamDir)' == ''">S:\Steam</SteamDir>
 		<ProfileDir Condition="'$(ProfileDir)' == ''">S:\Steam\steamapps\common\Crab Game</ProfileDir>
@@ -121,6 +121,10 @@
 		<!-- Other Mod Assemblies -->
 		<Reference Include="ChatCommands">
 			<HintPath>$(DepsDir)\Commands\ChatCommands\bin\Release\netstandard2.1\lammas123.ChatCommands.dll</HintPath>
+		</Reference>
+
+		<Reference Include="CrabDevKit">
+			<HintPath>$(DepsDir)\CrabDevKit\bin\Release\netstandard2.1\lammas123.CrabDevKit.dll</HintPath>
 		</Reference>
 
 		<!-- Unity Assemblies-->
